@@ -1,0 +1,11 @@
+c:\users\danil\documents\visual studio 2015\Projects\Delivery\Delivery\bin\Debug\Delivery.exe.config
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\bin\Debug\Delivery.exe
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\bin\Debug\Delivery.pdb
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\bin\Debug\MySql.Data.dll
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.csprojResolveAssemblyReference.cache
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.Form1.resources
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.Properties.Resources.resources
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.csproj.GenerateResource.Cache
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.exe
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.pdb
+C:\Users\Danil\Documents\Visual Studio 2015\Projects\Delivery\Delivery\obj\Debug\Delivery.Form3.resources
