@@ -26,6 +26,50 @@ namespace Delivery
         double tonnCost = 0;    //Цена за тонну
         double bagCost = 0;     //Цена за мешок
 
+        List<String> trucks = new List<String>();
+
+        public void resultTrucks()
+        {
+            if (radioButton4.Checked == true)
+            {
+                comboBox3.Items.Clear();
+                comboBox3.Text = "";
+                comboBox4.Items.Clear();
+                comboBox4.Text = "";
+                for (int i = 0; i < trucks.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        comboBox3.Items.Add(trucks.ElementAt(i));
+                        comboBox3.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        if (i == 1)
+                        {
+                            comboBox4.Items.Add(trucks.ElementAt(i));
+                            comboBox4.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            comboBox3.Items.Add(trucks.ElementAt(i));
+                            comboBox4.Items.Add(trucks.ElementAt(i));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                comboBox3.Items.Clear();
+                comboBox3.Text = "";
+                foreach (String truck in trucks)
+                {
+                    comboBox3.Items.Add(truck);
+                }
+                comboBox3.SelectedIndex = 0;
+            }
+        }
+
         public void resultCost()
         {
             double result = 0;
@@ -38,6 +82,7 @@ namespace Delivery
         public void resultCar()
         {
             comboBox3.Items.Clear();
+            trucks.Clear();
             List<String> cars = new List<String>();
             bool bulk = false;  //заказ на груз насыпью
             bool bag = false;   //заказ на груз в мешках
@@ -130,8 +175,10 @@ namespace Delivery
                             dataReader.Close();
                             String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                             //MessageBox.Show(truck);
-                            comboBox3.Items.Add(truck);
-                            comboBox3.SelectedIndex = 0;
+                            trucks.Add(truck);
+
+                            //comboBox3.Items.Add(truck);
+                            //comboBox3.SelectedIndex = 0;
                         }
                     }
                 }
@@ -198,8 +245,9 @@ namespace Delivery
                                 dataReader.Close();
                                 String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                                 //MessageBox.Show(truck);
-                                comboBox3.Items.Add(truck);
-                                comboBox3.SelectedIndex = 0;
+                                trucks.Add(truck);
+                                //comboBox3.Items.Add(truck);
+                                //comboBox3.SelectedIndex = 0;
                             }
                         }
                     }
@@ -267,8 +315,9 @@ namespace Delivery
                                     dataReader.Close();
                                     String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                                     //MessageBox.Show(truck);
-                                    comboBox3.Items.Add(truck);
-                                    comboBox3.SelectedIndex = 0;
+                                    trucks.Add(truck);
+                                    //comboBox3.Items.Add(truck);
+                                    //comboBox3.SelectedIndex = 0;
                                 }
                             }
                         }
@@ -288,10 +337,11 @@ namespace Delivery
                                 tonnage = dataReader[2].ToString();
                                 String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                                 //MessageBox.Show(truck);
-                                comboBox3.Items.Add(truck);
+                                trucks.Add(truck);
+                                //comboBox3.Items.Add(truck);
                             }
                             dataReader.Close();
-                            comboBox3.SelectedIndex = 0;
+                            //comboBox3.SelectedIndex = 0;
                         }
                     }
                 }
@@ -365,8 +415,9 @@ namespace Delivery
                             dataReader.Close();
                             String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                             //MessageBox.Show(truck);
-                            comboBox3.Items.Add(truck);
-                            comboBox3.SelectedIndex = 0;
+                            trucks.Add(truck);
+                            //comboBox3.Items.Add(truck);
+                            //comboBox3.SelectedIndex = 0;
                         }
                     }
                 }
@@ -433,8 +484,9 @@ namespace Delivery
                                 dataReader.Close();
                                 String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                                 //MessageBox.Show(truck);
-                                comboBox3.Items.Add(truck);
-                                comboBox3.SelectedIndex = 0;
+                                trucks.Add(truck);
+                                //comboBox3.Items.Add(truck);
+                                //comboBox3.SelectedIndex = 0;
                             }
                         }
                     }
@@ -502,8 +554,9 @@ namespace Delivery
                                     dataReader.Close();
                                     String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                                     //MessageBox.Show(truck);
-                                    comboBox3.Items.Add(truck);
-                                    comboBox3.SelectedIndex = 0;
+                                    trucks.Add(truck);
+                                    //comboBox3.Items.Add(truck);
+                                    //comboBox3.SelectedIndex = 0;
                                 }
                             }
                         }
@@ -523,15 +576,18 @@ namespace Delivery
                                 tonnage = dataReader[2].ToString();
                                 String truck = carName + "(" + regNumber + ") " + tonnage + "т";
                                 //MessageBox.Show(truck);
-                                comboBox3.Items.Add(truck);
+                                //comboBox3.Items.Add(truck);
+                                trucks.Add(truck);
                             }
                             dataReader.Close();
-                            comboBox3.SelectedIndex = 0;
+                            //comboBox3.SelectedIndex = 0;
                         }
                     }
                 }
             }
-
+            //
+            resultTrucks();
+            //
         }
 
         public Form3()
@@ -559,6 +615,9 @@ namespace Delivery
             this.Height = 705;
             panel5.Location = new Point(14, 409);
             panel4.Visible = true;
+            //
+            resultCar();
+            //
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
@@ -566,6 +625,9 @@ namespace Delivery
             panel4.Visible = false;
             this.Height = 625;
             panel5.Location = new Point(14, 328);
+            //
+            resultCar();
+            //
         }
 
         private void Form3_Load(object sender, EventArgs e)
@@ -808,12 +870,20 @@ namespace Delivery
             //
             resultCar();
             //
+            //
+            materialCost = Convert.ToDouble(numericUpDown2.Value) * bagCost;
+            resultCost();
+            //
         }
 
         private void tabPage1_Enter(object sender, EventArgs e)
         {
             //
             resultCar();
+            //
+            //
+            materialCost = Convert.ToDouble(numericUpDown1.Value) * tonnCost;
+            resultCost();
             //
         }
     }
