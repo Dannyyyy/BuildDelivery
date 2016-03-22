@@ -35,6 +35,505 @@ namespace Delivery
             textBox8.Text = Convert.ToString(result);
         }
 
+        public void resultCar()
+        {
+            comboBox3.Items.Clear();
+            List<String> cars = new List<String>();
+            bool bulk = false;  //заказ на груз насыпью
+            bool bag = false;   //заказ на груз в мешках
+
+            bool compact = false;  // требование на малогабаритное ТС
+            bool tipper = false;   // требование на самосвал
+
+            if (tabControl1.SelectedTab == tabPage1)
+            {
+                bulk = true;
+            }
+            else
+            {
+                bag = true;
+            }
+            if (checkBox2.Checked == true)
+            {
+                compact = true;
+            }
+            if (checkBox3.Checked == true)
+            {
+                tipper = true;
+            }
+            if (bulk) //Насыпь
+            {
+                if (compact && tipper) // Малогабаритный и самосвал
+                {
+                    MySqlCommand msc = new MySqlCommand();
+                    msc.CommandText = "SELECT pk_car  FROM Car  WHERE delivery_bulk  = 1";
+                    msc.Connection = ConnectionToMySQL;
+                    MySqlDataReader dataReader = msc.ExecuteReader();
+                    //String car = null;
+                    while (dataReader.Read())
+                    {
+                        cars.Add(dataReader[0].ToString());
+                        //MessageBox.Show(dataReader[0].ToString());
+                    }
+                    dataReader.Close();
+                    foreach (String car in cars)
+                    {
+                        List<String> instructions = new List<String>();
+                        msc.CommandText = "SELECT pk_instruction  FROM instruction_car  WHERE pk_car  = '" + car + "'";
+                        msc.Connection = ConnectionToMySQL;
+                        dataReader = msc.ExecuteReader();
+                        while (dataReader.Read())
+                        {
+                            instructions.Add(dataReader[0].ToString());
+                            //MessageBox.Show(dataReader[0].ToString());
+                        }
+                        dataReader.Close();
+
+                        bool instructionFirst = false;
+                        bool instructionSecond = false;
+
+                        foreach (String instruction in instructions)
+                        {
+                            msc.CommandText = "SELECT desc_instruction  FROM instruction  WHERE pk_instruction  = '" + instruction + "'";
+                            msc.Connection = ConnectionToMySQL;
+                            dataReader = msc.ExecuteReader();
+                            String instructionName = null;
+                            while (dataReader.Read())
+                            {
+                                instructionName = dataReader[0].ToString();
+                                //MessageBox.Show(dataReader[0].ToString());
+                            }
+                            dataReader.Close();
+                            if (instructionName == "Compact")
+                            {
+                                instructionFirst = true;
+                            }
+                            if (instructionName == "Tipper")
+                            {
+                                instructionSecond = true;
+                            }
+                        }
+                        if (instructionFirst && instructionSecond)
+                        {
+                            msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE pk_car  = '" + car + "'";
+                            msc.Connection = ConnectionToMySQL;
+                            dataReader = msc.ExecuteReader();
+                            String carName = null;
+                            String regNumber = null;
+                            String tonnage = null;
+                            while (dataReader.Read())
+                            {
+                                carName = dataReader[0].ToString();
+                                regNumber = dataReader[1].ToString();
+                                tonnage = dataReader[2].ToString();
+                            }
+                            dataReader.Close();
+                            String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                            //MessageBox.Show(truck);
+                            comboBox3.Items.Add(truck);
+                            comboBox3.SelectedIndex = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    if (compact) // Малогабаритный
+                    {
+                        MySqlCommand msc = new MySqlCommand();
+                        msc.CommandText = "SELECT pk_car  FROM Car  WHERE delivery_bulk  = 1";
+                        msc.Connection = ConnectionToMySQL;
+                        MySqlDataReader dataReader = msc.ExecuteReader();
+                        while (dataReader.Read())
+                        {
+                            cars.Add(dataReader[0].ToString());
+                            //MessageBox.Show(dataReader[0].ToString());
+                        }
+                        dataReader.Close();
+                        foreach (String car in cars)
+                        {
+                            List<String> instructions = new List<String>();
+                            msc.CommandText = "SELECT pk_instruction  FROM instruction_car  WHERE pk_car  = '" + car + "'";
+                            msc.Connection = ConnectionToMySQL;
+                            dataReader = msc.ExecuteReader();
+                            while (dataReader.Read())
+                            {
+                                instructions.Add(dataReader[0].ToString());
+                                //MessageBox.Show(dataReader[0].ToString());
+                            }
+                            dataReader.Close();
+
+                            bool instructionFirst = false;
+
+                            foreach (String instruction in instructions)
+                            {
+                                msc.CommandText = "SELECT desc_instruction  FROM instruction  WHERE pk_instruction  = '" + instruction + "'";
+                                msc.Connection = ConnectionToMySQL;
+                                dataReader = msc.ExecuteReader();
+                                String instructionName = null;
+                                while (dataReader.Read())
+                                {
+                                    instructionName = dataReader[0].ToString();
+                                    //MessageBox.Show(dataReader[0].ToString());
+                                }
+                                dataReader.Close();
+                                if (instructionName == "Compact")
+                                {
+                                    instructionFirst = true;
+                                }
+                            }
+                            if (instructionFirst)
+                            {
+                                msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE pk_car  = '" + car + "'";
+                                msc.Connection = ConnectionToMySQL;
+                                dataReader = msc.ExecuteReader();
+                                String carName = null;
+                                String regNumber = null;
+                                String tonnage = null;
+                                while (dataReader.Read())
+                                {
+                                    carName = dataReader[0].ToString();
+                                    regNumber = dataReader[1].ToString();
+                                    tonnage = dataReader[2].ToString();
+                                }
+                                dataReader.Close();
+                                String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                                //MessageBox.Show(truck);
+                                comboBox3.Items.Add(truck);
+                                comboBox3.SelectedIndex = 0;
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (tipper)  // Самосвал
+                        {
+                            MySqlCommand msc = new MySqlCommand();
+                            msc.CommandText = "SELECT pk_car  FROM Car  WHERE delivery_bulk  = 1";
+                            msc.Connection = ConnectionToMySQL;
+                            MySqlDataReader dataReader = msc.ExecuteReader();
+                            //String car = null;
+                            while (dataReader.Read())
+                            {
+                                cars.Add(dataReader[0].ToString());
+                                //MessageBox.Show(dataReader[0].ToString());
+                            }
+                            dataReader.Close();
+                            foreach (String car in cars)
+                            {
+                                List<String> instructions = new List<String>();
+                                msc.CommandText = "SELECT pk_instruction  FROM instruction_car  WHERE pk_car  = '" + car + "'";
+                                msc.Connection = ConnectionToMySQL;
+                                dataReader = msc.ExecuteReader();
+                                while (dataReader.Read())
+                                {
+                                    instructions.Add(dataReader[0].ToString());
+                                    //MessageBox.Show(dataReader[0].ToString());
+                                }
+                                dataReader.Close();
+
+                                bool instructionSecond = false;
+
+                                foreach (String instruction in instructions)
+                                {
+                                    msc.CommandText = "SELECT desc_instruction  FROM instruction  WHERE pk_instruction  = '" + instruction + "'";
+                                    msc.Connection = ConnectionToMySQL;
+                                    dataReader = msc.ExecuteReader();
+                                    String instructionName = null;
+                                    while (dataReader.Read())
+                                    {
+                                        instructionName = dataReader[0].ToString();
+                                        //MessageBox.Show(dataReader[0].ToString());
+                                    }
+                                    dataReader.Close();
+                                    if (instructionName == "Tipper")
+                                    {
+                                        instructionSecond = true;
+                                    }
+                                }
+                                if (instructionSecond)
+                                {
+                                    msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE pk_car  = '" + car + "'";
+                                    msc.Connection = ConnectionToMySQL;
+                                    dataReader = msc.ExecuteReader();
+                                    String carName = null;
+                                    String regNumber = null;
+                                    String tonnage = null;
+                                    while (dataReader.Read())
+                                    {
+                                        carName = dataReader[0].ToString();
+                                        regNumber = dataReader[1].ToString();
+                                        tonnage = dataReader[2].ToString();
+                                    }
+                                    dataReader.Close();
+                                    String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                                    //MessageBox.Show(truck);
+                                    comboBox3.Items.Add(truck);
+                                    comboBox3.SelectedIndex = 0;
+                                }
+                            }
+                        }
+                        else  // Требований к ТС нет
+                        {
+                            MySqlCommand msc = new MySqlCommand();
+                            msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE delivery_bulk  = 1";
+                            msc.Connection = ConnectionToMySQL;
+                            MySqlDataReader dataReader = msc.ExecuteReader();
+                            String carName = null;
+                            String regNumber = null;
+                            String tonnage = null;
+                            while (dataReader.Read())
+                            {
+                                carName = dataReader[0].ToString();
+                                regNumber = dataReader[1].ToString();
+                                tonnage = dataReader[2].ToString();
+                                String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                                //MessageBox.Show(truck);
+                                comboBox3.Items.Add(truck);
+                            }
+                            dataReader.Close();
+                            comboBox3.SelectedIndex = 0;
+                        }
+                    }
+                }
+            }
+            else //Мешками
+            {
+                if (compact && tipper) // Малогабаритный и самосвал
+                {
+                    MySqlCommand msc = new MySqlCommand();
+                    msc.CommandText = "SELECT pk_car  FROM Car  WHERE delivery_bag  = 1";
+                    msc.Connection = ConnectionToMySQL;
+                    MySqlDataReader dataReader = msc.ExecuteReader();
+                    //String car = null;
+                    while (dataReader.Read())
+                    {
+                        cars.Add(dataReader[0].ToString());
+                        //MessageBox.Show(dataReader[0].ToString());
+                    }
+                    dataReader.Close();
+                    foreach (String car in cars)
+                    {
+                        List<String> instructions = new List<String>();
+                        msc.CommandText = "SELECT pk_instruction  FROM instruction_car  WHERE pk_car  = '" + car + "'";
+                        msc.Connection = ConnectionToMySQL;
+                        dataReader = msc.ExecuteReader();
+                        while (dataReader.Read())
+                        {
+                            instructions.Add(dataReader[0].ToString());
+                            //MessageBox.Show(dataReader[0].ToString());
+                        }
+                        dataReader.Close();
+
+                        bool instructionFirst = false;
+                        bool instructionSecond = false;
+
+                        foreach (String instruction in instructions)
+                        {
+                            msc.CommandText = "SELECT desc_instruction  FROM instruction  WHERE pk_instruction  = '" + instruction + "'";
+                            msc.Connection = ConnectionToMySQL;
+                            dataReader = msc.ExecuteReader();
+                            String instructionName = null;
+                            while (dataReader.Read())
+                            {
+                                instructionName = dataReader[0].ToString();
+                                //MessageBox.Show(dataReader[0].ToString());
+                            }
+                            dataReader.Close();
+                            if (instructionName == "Compact")
+                            {
+                                instructionFirst = true;
+                            }
+                            if (instructionName == "Tipper")
+                            {
+                                instructionSecond = true;
+                            }
+                        }
+                        if (instructionFirst && instructionSecond)
+                        {
+                            msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE pk_car  = '" + car + "'";
+                            msc.Connection = ConnectionToMySQL;
+                            dataReader = msc.ExecuteReader();
+                            String carName = null;
+                            String regNumber = null;
+                            String tonnage = null;
+                            while (dataReader.Read())
+                            {
+                                carName = dataReader[0].ToString();
+                                regNumber = dataReader[1].ToString();
+                                tonnage = dataReader[2].ToString();
+                            }
+                            dataReader.Close();
+                            String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                            //MessageBox.Show(truck);
+                            comboBox3.Items.Add(truck);
+                            comboBox3.SelectedIndex = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    if (compact) // Малогабаритный
+                    {
+                        MySqlCommand msc = new MySqlCommand();
+                        msc.CommandText = "SELECT pk_car  FROM Car  WHERE delivery_bag  = 1";
+                        msc.Connection = ConnectionToMySQL;
+                        MySqlDataReader dataReader = msc.ExecuteReader();
+                        while (dataReader.Read())
+                        {
+                            cars.Add(dataReader[0].ToString());
+                            //MessageBox.Show(dataReader[0].ToString());
+                        }
+                        dataReader.Close();
+                        foreach (String car in cars)
+                        {
+                            List<String> instructions = new List<String>();
+                            msc.CommandText = "SELECT pk_instruction  FROM instruction_car  WHERE pk_car  = '" + car + "'";
+                            msc.Connection = ConnectionToMySQL;
+                            dataReader = msc.ExecuteReader();
+                            while (dataReader.Read())
+                            {
+                                instructions.Add(dataReader[0].ToString());
+                                //MessageBox.Show(dataReader[0].ToString());
+                            }
+                            dataReader.Close();
+
+                            bool instructionFirst = false;
+
+                            foreach (String instruction in instructions)
+                            {
+                                msc.CommandText = "SELECT desc_instruction  FROM instruction  WHERE pk_instruction  = '" + instruction + "'";
+                                msc.Connection = ConnectionToMySQL;
+                                dataReader = msc.ExecuteReader();
+                                String instructionName = null;
+                                while (dataReader.Read())
+                                {
+                                    instructionName = dataReader[0].ToString();
+                                    //MessageBox.Show(dataReader[0].ToString());
+                                }
+                                dataReader.Close();
+                                if (instructionName == "Compact")
+                                {
+                                    instructionFirst = true;
+                                }
+                            }
+                            if (instructionFirst)
+                            {
+                                msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE pk_car  = '" + car + "'";
+                                msc.Connection = ConnectionToMySQL;
+                                dataReader = msc.ExecuteReader();
+                                String carName = null;
+                                String regNumber = null;
+                                String tonnage = null;
+                                while (dataReader.Read())
+                                {
+                                    carName = dataReader[0].ToString();
+                                    regNumber = dataReader[1].ToString();
+                                    tonnage = dataReader[2].ToString();
+                                }
+                                dataReader.Close();
+                                String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                                //MessageBox.Show(truck);
+                                comboBox3.Items.Add(truck);
+                                comboBox3.SelectedIndex = 0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (tipper)  // Самосвал
+                        {
+                            MySqlCommand msc = new MySqlCommand();
+                            msc.CommandText = "SELECT pk_car  FROM Car  WHERE delivery_bag  = 1";
+                            msc.Connection = ConnectionToMySQL;
+                            MySqlDataReader dataReader = msc.ExecuteReader();
+                            //String car = null;
+                            while (dataReader.Read())
+                            {
+                                cars.Add(dataReader[0].ToString());
+                                //MessageBox.Show(dataReader[0].ToString());
+                            }
+                            dataReader.Close();
+                            foreach (String car in cars)
+                            {
+                                List<String> instructions = new List<String>();
+                                msc.CommandText = "SELECT pk_instruction  FROM instruction_car  WHERE pk_car  = '" + car + "'";
+                                msc.Connection = ConnectionToMySQL;
+                                dataReader = msc.ExecuteReader();
+                                while (dataReader.Read())
+                                {
+                                    instructions.Add(dataReader[0].ToString());
+                                    //MessageBox.Show(dataReader[0].ToString());
+                                }
+                                dataReader.Close();
+
+                                bool instructionSecond = false;
+
+                                foreach (String instruction in instructions)
+                                {
+                                    msc.CommandText = "SELECT desc_instruction  FROM instruction  WHERE pk_instruction  = '" + instruction + "'";
+                                    msc.Connection = ConnectionToMySQL;
+                                    dataReader = msc.ExecuteReader();
+                                    String instructionName = null;
+                                    while (dataReader.Read())
+                                    {
+                                        instructionName = dataReader[0].ToString();
+                                        //MessageBox.Show(dataReader[0].ToString());
+                                    }
+                                    dataReader.Close();
+                                    if (instructionName == "Tipper")
+                                    {
+                                        instructionSecond = true;
+                                    }
+                                }
+                                if (instructionSecond)
+                                {
+                                    msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE pk_car  = '" + car + "'";
+                                    msc.Connection = ConnectionToMySQL;
+                                    dataReader = msc.ExecuteReader();
+                                    String carName = null;
+                                    String regNumber = null;
+                                    String tonnage = null;
+                                    while (dataReader.Read())
+                                    {
+                                        carName = dataReader[0].ToString();
+                                        regNumber = dataReader[1].ToString();
+                                        tonnage = dataReader[2].ToString();
+                                    }
+                                    dataReader.Close();
+                                    String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                                    //MessageBox.Show(truck);
+                                    comboBox3.Items.Add(truck);
+                                    comboBox3.SelectedIndex = 0;
+                                }
+                            }
+                        }
+                        else  // Требований к ТС нет
+                        {
+                            MySqlCommand msc = new MySqlCommand();
+                            msc.CommandText = "SELECT mark_car,regist_number, tonnage  FROM Car  WHERE delivery_bag  = 1";
+                            msc.Connection = ConnectionToMySQL;
+                            MySqlDataReader dataReader = msc.ExecuteReader();
+                            String carName = null;
+                            String regNumber = null;
+                            String tonnage = null;
+                            while (dataReader.Read())
+                            {
+                                carName = dataReader[0].ToString();
+                                regNumber = dataReader[1].ToString();
+                                tonnage = dataReader[2].ToString();
+                                String truck = carName + "(" + regNumber + ") " + tonnage + "т";
+                                //MessageBox.Show(truck);
+                                comboBox3.Items.Add(truck);
+                            }
+                            dataReader.Close();
+                            comboBox3.SelectedIndex = 0;
+                        }
+                    }
+                }
+            }
+
+        }
+
         public Form3()
         {
             String serverName = "127.0.0.1"; // Адрес сервера (для локальной базы пишите "localhost")
@@ -288,6 +787,34 @@ namespace Delivery
             resultCost();
             //
 
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            //
+            resultCar();
+            //
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            //
+            resultCar();
+            //
+        }
+
+        private void tabPage3_Enter(object sender, EventArgs e)
+        {
+            //
+            resultCar();
+            //
+        }
+
+        private void tabPage1_Enter(object sender, EventArgs e)
+        {
+            //
+            resultCar();
+            //
         }
     }
 }
